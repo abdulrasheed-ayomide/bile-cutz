@@ -1,0 +1,19 @@
+{
+  "name": "bile-cutz",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bile Cutz — premium barbershop booking & management platform",
+  "scripts": {
+    "install:all": "npm --prefix backend install && npm --prefix frontend install",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "db:migrate": "npm --prefix backend run db:migrate",
+    "db:seed": "npm --prefix backend run db:seed",
+    "db:seed:demo": "npm --prefix backend run db:seed:demo",
+    "admin:create": "npm --prefix backend run admin:create --",
+    "typecheck": "npm --prefix backend run typecheck && npm --prefix frontend run typecheck",
+    "lint": "npm --prefix backend run lint && npm --prefix frontend run lint",
+    "test": "npm --prefix backend test && npm --prefix frontend test",
+    "build": "npm --prefix backend run build && npm --prefix frontend run build"
+  }
+}
