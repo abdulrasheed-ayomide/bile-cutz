@@ -32,7 +32,7 @@ export function Home() {
           </div>
           <div className="hero-facts">
             <span><strong>Pay at the shop</strong>No online payment needed</span>
-            <span><strong>{b.address}</strong>Find us</span>
+            <span><strong style={{ whiteSpace: 'pre-line' }}>{b.address}</strong>Find us</span>
             {reviews.data && reviews.data.count > 0 && <span><strong><Stars n={Math.round(reviews.data.average ?? 5)} /> {reviews.data.average}</strong>from {reviews.data.count} reviews</span>}
           </div>
         </div>
@@ -63,7 +63,7 @@ export function Home() {
       <section className="section wrap" style={{ paddingTop: 0 }}>
         <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: '2rem' }}>
           <div className="panel"><h3>Opening hours</h3><HoursTable /></div>
-          <div className="panel"><h3>Find us</h3><p>{b.address}</p><p className="muted">{b.phone}<br />{b.email}</p>
+          <div className="panel"><h3>Find us</h3><p style={{ whiteSpace: 'pre-line' }}>{b.address}</p><p className="muted">{b.phone && <>{b.phone}<br /></>}{b.email}</p>
             <div className="row"><Link to="/contact" className="btn btn-ghost btn-sm">Contact details</Link>{b.whatsappLink && <a className="btn btn-ghost btn-sm" href={b.whatsappLink} target="_blank" rel="noopener noreferrer">WhatsApp</a>}</div></div>
         </div>
       </section>
@@ -159,13 +159,13 @@ export function ContactPage() {
   if (!b) return <Spinner />;
   return (
     <div className="wrap section" style={{ paddingTop: 0 }}>
-      <div className="page-head"><h1>Contact</h1><p>Message us on WhatsApp for quick questions, or book online any time.</p></div>
+      <div className="page-head"><h1>Contact</h1><p>{b.whatsappLink ? 'Message us on WhatsApp for quick questions, or book online any time.' : 'Book online any time, or get in touch by email.'}</p></div>
       <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: '1.5rem' }}>
         <div className="panel stack">
           <h3>Details</h3>
-          <dl className="kv"><dt>Address</dt><dd>{b.address}</dd><dt>Phone</dt><dd><a href={`tel:${b.phone.replace(/\s/g, '')}`}>{b.phone}</a></dd><dt>Email</dt><dd><a href={`mailto:${b.email}`}>{b.email}</a></dd></dl>
+          <dl className="kv"><dt>Address</dt><dd style={{ whiteSpace: 'pre-line' }}>{b.address}</dd>{b.phone && <><dt>Phone</dt><dd><a href={`tel:${b.phone.replace(/\s/g, '')}`}>{b.phone}</a></dd></>}<dt>Email</dt><dd><a href={`mailto:${b.email}`}>{b.email}</a></dd></dl>
           <div className="row">{b.whatsappLink && <a className="btn btn-primary" href={b.whatsappLink} target="_blank" rel="noopener noreferrer">Message on WhatsApp</a>}<Link to="/book" className="btn btn-ghost">Book online</Link></div>
-          <p className="hint">WhatsApp opens with a message ready to send. Nothing is sent until you press send in WhatsApp.</p>
+          {b.whatsappLink && <p className="hint">WhatsApp opens with a message ready to send. Nothing is sent until you press send in WhatsApp.</p>}
         </div>
         <div className="panel"><h3>Opening hours</h3><HoursTable /><ClosuresNote /></div>
       </div>

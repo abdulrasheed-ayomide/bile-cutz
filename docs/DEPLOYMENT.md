@@ -53,9 +53,10 @@ cd backend && cp .env.example .env
 npm ci
 npm run db:migrate          # applies database/migrations/*.sql, tracked in schema_migrations
 npm run db:seed             # opening hours, default settings row, FAQs (idempotent)
-npm run admin:create -- --email owner@yourshop.com --name "Shop Owner"    # hidden password prompt, min 12 chars
+# Only if no admin account exists yet: npm run admin:create -- --email owner@yourshop.com --name "Shop Owner"
 ```
 Skip `db:seed:demo` in production unless you want sample services (you can also delete them in the admin).
+The contact-details migration updates only the business settings row; it does not change admin login credentials.
 Delete your local `.env` afterwards, or keep it out of git (it is ignored).
 
 ## 5. Deploy the API  *(needs your host login)*
@@ -72,7 +73,7 @@ Delete your local `.env` afterwards, or keep it out of git (it is ignored).
 | `PUBLIC_API_URL` | the API's public URL, e.g. `https://api.bilecutz.com` |
 | `TRUST_PROXY` | `true` (so rate limiting sees real client IPs behind the host's proxy) |
 | `EMAIL_PROVIDER` | `smtp` (the server **refuses to start** in production with `dev-outbox`) + `EMAIL_FROM`, `SMTP_HOST/PORT/USER/PASS` |
-| `STORAGE_PROVIDER` | `supabase` + `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_STORAGE_BUCKET` (host disks are ephemeral; do not use `local`) |
+| `STORAGE_PROVIDER` | `supabase` + `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_STORAGE_BUCKET=bile-cutz-media` (host disks are ephemeral; do not use `local`) |
 | `COOKIE_SAMESITE` / `COOKIE_DOMAIN` | see section 6 |
 
 Build command `npm ci && npm run build`, start command `node dist/server.js`, health check `/health`.
@@ -139,7 +140,8 @@ Do these on the live site with a throw-away customer account and then clean up:
 
 ## 10. Before you go live — owner checklist
 
-- [ ] Replace placeholder contact details, address, WhatsApp number, about text, policies, hours (Admin → Settings).
+- [ ] Review the prefilled business email, address and temporary WhatsApp number in Admin → Settings; add the owner's general phone number only when provided.
+- [ ] Complete the about text, policies and opening hours; image uploads are decoded, resized by category, and stored as WebP.
 - [ ] Add your real services/prices/durations (or edit the demo ones), upload a logo, a hero image and gallery photos you own or are licensed to use.
 - [ ] Confirm currency (`NGN`) and timezone (`Africa/Lagos`) are right.
 - [ ] Real SMTP configured and tested; `EMAIL_FROM` domain has SPF/DKIM set up with your provider so emails don't land in spam.

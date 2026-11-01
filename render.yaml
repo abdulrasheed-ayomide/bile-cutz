@@ -28,5 +28,6 @@ services:
       - { key: SMTP_USER, sync: false }
       - { key: SMTP_PASS, sync: false }
       - { key: STORAGE_PROVIDER, value: supabase }
+      - { key: SUPABASE_STORAGE_BUCKET, value: bile-cutz-media }
       - { key: SUPABASE_URL, sync: false }
       - { key: SUPABASE_SERVICE_ROLE_KEY, sync: false }

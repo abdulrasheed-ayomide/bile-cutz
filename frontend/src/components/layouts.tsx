@@ -3,6 +3,7 @@ import { Link, NavLink, Navigate, Outlet, useLocation, useNavigate } from 'react
 import { api } from '../lib/api';
 import { useAdminAuth, useCustomerAuth } from '../lib/auth';
 import { useSettings } from '../lib/settings';
+import { socialLinks } from '../lib/socialLinks';
 import { useSocket, SocketProvider } from '../lib/socket';
 import type { Notification } from '../lib/types';
 import { Spinner } from './ui';
@@ -18,6 +19,14 @@ export function Brand({ to = '/' }: { to?: string }) {
   );
 }
 
+function SocialIcon({ platform }: { platform: (typeof socialLinks)[number]['platform'] }) {
+  const common = { width: 20, height: 20, viewBox: '0 0 24 24', fill: 'currentColor', 'aria-hidden': true as const };
+  if (platform === 'Facebook') return <svg {...common}><path d="M13.5 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.6 1.6-1.6h1.7V3.8c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3V10H7.3v3h2.8v8h3.4Z" /></svg>;
+  if (platform === 'Instagram') return <svg {...common} fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.8" r=".8" fill="currentColor" stroke="none" /></svg>;
+  if (platform === 'TikTok') return <svg {...common}><path d="M19.6 8.2a6.8 6.8 0 0 1-4.2-1.5v8.1a5.6 5.6 0 1 1-4.8-5.5v3.2a2.5 2.5 0 1 0 1.7 2.3V3h3.1c.2 2.2 1.8 3.9 4.2 4.2v1Z" /></svg>;
+  return <svg {...common}><path d="M18.9 3H22l-6.8 7.8L23.2 21h-6.3L12 14.8 6.5 21H3.4l7.2-8.3L2.8 3h6.5l4.5 5.9L18.9 3Zm-1.1 16h1.7L8.3 4.9H6.5L17.8 19Z" /></svg>;
+}
+
 /** Scroll to top on navigation. */
 function ScrollTop() { const { pathname } = useLocation(); useEffect(() => { window.scrollTo(0, 0); }, [pathname]); return null; }
 
@@ -28,6 +37,7 @@ export function PublicLayout() {
   const loc = useLocation();
   useEffect(() => setOpen(false), [loc.pathname]);
   const b = settings?.business;
+  const configuredSocialLinks = socialLinks.filter((social) => social.url.trim());
   return (
     <>
       <ScrollTop />
@@ -60,12 +70,14 @@ export function PublicLayout() {
         <div className="wrap">
           <div className="footer-grid">
             <div><Brand /><p className="muted" style={{ marginTop: '.75rem', maxWidth: '32ch' }}>{b?.tagline}</p></div>
-            <div><h4>Visit</h4><p className="muted">{b?.address}</p></div>
+            <div><h4>Visit</h4><p className="muted" style={{ whiteSpace: 'pre-line' }}>{b?.address}</p></div>
             <div><h4>Contact</h4><ul>
               {b?.phone && <li><a href={`tel:${b.phone.replace(/\s/g, '')}`}>{b.phone}</a></li>}
               {b?.email && <li><a href={`mailto:${b.email}`}>{b.email}</a></li>}
               {b?.whatsappLink && <li><a href={b.whatsappLink} target="_blank" rel="noopener noreferrer">Message on WhatsApp</a></li>}
-            </ul></div>
+            </ul>{configuredSocialLinks.length > 0 && <div className="row" aria-label="Social media" style={{ gap: '.65rem', marginTop: '.75rem' }}>
+              {configuredSocialLinks.map((social) => <a key={social.platform} href={social.url} target="_blank" rel="noopener noreferrer" aria-label={social.platform} title={social.platform} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 32, minHeight: 32 }}><SocialIcon platform={social.platform} /></a>)}
+            </div>}</div>
             <div><h4>Explore</h4><ul>
               <li><Link to="/book">Book an appointment</Link></li><li><Link to="/services">Services</Link></li><li><Link to="/faq">FAQ</Link></li><li><Link to="/register">Create an account</Link></li>
             </ul></div>

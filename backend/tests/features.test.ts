@@ -392,9 +392,12 @@ describe('admin management & settings', () => {
     const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');
     const ok = await admin.agent.post('/api/admin/uploads').set('Origin', ORIGIN).set('X-CSRF-Token', admin.csrf).field('kind', 'gallery').attach('file', png, 'a.png');
     expect(ok.status).toBe(201);
-    expect(ok.body.url).toMatch(/\/uploads\/gallery\/[a-f0-9]{32}\.png$/);
+    expect(ok.body.url).toMatch(/\/uploads\/gallery\/[a-f0-9]{32}\.webp$/);
+    await admin.agent.get(new URL(ok.body.url).pathname).expect(200).expect('Content-Type', /image\/webp/);
     const fake = await admin.agent.post('/api/admin/uploads').set('Origin', ORIGIN).set('X-CSRF-Token', admin.csrf).field('kind', 'gallery').attach('file', Buffer.from('<script>alert(1)</script>'), 'evil.png');
     expect(fake.status).toBe(400);
+    const corrupt = await admin.agent.post('/api/admin/uploads').set('Origin', ORIGIN).set('X-CSRF-Token', admin.csrf).field('kind', 'gallery').attach('file', png.subarray(0, 20), 'corrupt.png');
+    expect(corrupt.status).toBe(400);
   });
 
   it('WhatsApp links are encoded and only built when a phone number exists', async () => {
